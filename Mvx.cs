@@ -2,6 +2,6 @@
 {
     public static class Mvx
     {
-        public static CMvx Ioc = new CMvx();
+        public static readonly CMvx Ioc = new CMvx();
     }
 }

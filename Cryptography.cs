@@ -1,19 +1,19 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Security.Cryptography;
+using System.Text;
 
-/// <summary>
-/// This class uses a symmetric key algorithm (Rijndael/AES) to encrypt and 
-/// decrypt data. As long as encryption and decryption routines use the same
-/// parameters to generate the keys, the keys are guaranteed to be the same.
-/// The class uses static functions with duplicate code to make it easier to
-/// demonstrate encryption and decryption logic. In a real-life application, 
-/// this may not be the most efficient way of handling encryption, so - as
-/// soon as you feel comfortable with it - you may want to redesign this class.
-/// </summary>
-namespace Cryptography
+namespace MobilityScm.Utilerias
 {
+    /// <summary>
+    /// This class uses a symmetric key algorithm (Rijndael/AES) to encrypt and 
+    /// decrypt data. As long as encryption and decryption routines use the same
+    /// parameters to generate the keys, the keys are guaranteed to be the same.
+    /// The class uses static functions with duplicate code to make it easier to
+    /// demonstrate encryption and decryption logic. In a real-life application, 
+    /// this may not be the most efficient way of handling encryption, so - as
+    /// soon as you feel comfortable with it - you may want to redesign this class.
+    /// </summary>
     public static class Cryptography
     {
         /// <summary>

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace MobilityScm.Utilerias
 {
-    public class IsDateClass
+    public static class IsDateClass
     {
         public static bool IsDate(Object obj)
         {

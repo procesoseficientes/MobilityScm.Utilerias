@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Net;
 using System.Web.Script.Serialization;
 using System.IO;
@@ -8,8 +9,8 @@ namespace MobilityScm.Utilerias
     public static class Rest
     {
         private static readonly JavaScriptSerializer Jss = new JavaScriptSerializer();
-        
-        
+
+
         public static T ExecutePost<T>(string actionUrl, object body) where T : class
         {
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(actionUrl);
@@ -39,6 +40,28 @@ namespace MobilityScm.Utilerias
                 }
             }
             return null;
+        }
+
+
+        public static string ExecuteGet(string actionUrl)
+        {
+            string respuesta;
+
+            var solicitudAlApi = (HttpWebRequest)WebRequest.Create(actionUrl);
+            solicitudAlApi.Method = WebRequestMethods.Http.Get;
+            solicitudAlApi.Accept = "application/json";
+            solicitudAlApi.ContentType = "application/json";
+
+            using (var respuestaDelApi = (HttpWebResponse)solicitudAlApi.GetResponse())
+            {
+                var stream = respuestaDelApi.GetResponseStream();
+                if (stream == null) return null;
+                var reader = new StreamReader(stream);
+                respuesta = reader.ReadToEnd();
+                stream.Dispose();
+            }
+
+            return respuesta;
         }
     }
 }

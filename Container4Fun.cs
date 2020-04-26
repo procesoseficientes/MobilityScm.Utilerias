@@ -5,18 +5,18 @@ using System.Reflection;
 
 namespace MobilityScm.Utilerias
 {
-    
+
     [Serializable]
-    public  class CMvx
+    public class CMvx
     {
-        private  readonly IList<TypeRegister> Types = new List<TypeRegister>();
+        private readonly IList<TypeRegister> Types = new List<TypeRegister>();
 
         /// <summary>
         /// Registrar un objeto en un contenedor IoC
         /// </summary>
         /// <typeparam name="TContract">Representa una interface</typeparam>
         /// <typeparam name="TImplementation">Representante de la ejecución del contrato</typeparam>
-        public  void Register<TContract, TImplementation>()
+        public void Register<TContract, TImplementation>()
         {
             var typeFound = from t in Types
                             where t.Key == typeof(TContract) && t.Implementation == typeof(TImplementation)
@@ -26,7 +26,7 @@ namespace MobilityScm.Utilerias
 
         }
 
-        public  void RegisterType<TContract, TImplementation>()
+        public void RegisterType<TContract, TImplementation>()
         {
             Register<TContract, TImplementation>();
         }
@@ -36,7 +36,7 @@ namespace MobilityScm.Utilerias
         /// </summary>
         /// <typeparam name="TContract">Representa una interface</typeparam>
         /// <typeparam name="TImplementation">Representa la implementacion del contracto</typeparam>
-        public  void Register<TContract, TImplementation>(string name)
+        public void Register<TContract, TImplementation>(string name)
         {
             var typeFound = from t in Types
                             where t.Key == typeof(TContract) && t.Implementation == typeof(TImplementation) && t.Name == name
@@ -53,7 +53,7 @@ namespace MobilityScm.Utilerias
         /// <typeparam name="TImplementation">Representa la implementacion del contrato</typeparam>
         /// <param name="name"></param>
         /// <param name="instance">Establecer una instancia de una aplicación ya creada</param>
-        public  void Register<TContract, TImplementation>(string name, TImplementation instance)
+        public void Register<TContract, TImplementation>(string name, TImplementation instance)
         {
             Register<TContract, TImplementation>(name, instance, PropertiesTypeCondition.DisposeAll);
         }
@@ -66,7 +66,7 @@ namespace MobilityScm.Utilerias
         /// <param name="name"></param>
         /// <param name="instance">Establecer una instancia de una aplicación ya creada</param>
         /// <param name="propertiesCondition"></param>
-        public  void Register<TContract, TImplementation>(string name, TImplementation instance, PropertiesTypeCondition propertiesCondition)
+        public void Register<TContract, TImplementation>(string name, TImplementation instance, PropertiesTypeCondition propertiesCondition)
         {
             var typeFound = from t in Types
                             where t.Key == typeof(TContract) && t.Implementation == typeof(TImplementation)
@@ -84,7 +84,7 @@ namespace MobilityScm.Utilerias
         /// <param name="instance">Establecer una instancia de una aplicación ya creada</param>
         /// <param name="propertiesCondition"></param>
         /// <param name="instanceCondition">Share = Usa la misma instancia, NonShare = Crear una nueva instancia cada vez que</param>
-        public  void Register<TContract, TImplementation>(string name, TImplementation instance, PropertiesTypeCondition propertiesCondition, InstanceTypeCondition instanceCondition)
+        public void Register<TContract, TImplementation>(string name, TImplementation instance, PropertiesTypeCondition propertiesCondition, InstanceTypeCondition instanceCondition)
         {
             var typeFound = from t in Types
                             where t.Key == typeof(TContract) && t.Implementation == typeof(TImplementation)
@@ -99,104 +99,124 @@ namespace MobilityScm.Utilerias
         }
 
 
-        public  void LazyConstructAndRegisterSingleton<TContract, TImplementation>()
+        public void LazyConstructAndRegisterSingleton<TContract, TImplementation>()
         {
             TImplementation obj = default(TImplementation);
             Register<TContract, TImplementation>(null, obj, PropertiesTypeCondition.DisposeAll, InstanceTypeCondition.Share);
         }
 
-        public  void ConstructAndRegisterSingleton<TContract, TImplementation>()
+        public void ConstructAndRegisterSingleton<TContract, TImplementation>()
         {
             LazyConstructAndRegisterSingleton<TContract, TImplementation>();
             Resolve<TContract>();
         }
 
-        public  void RegisterSingleton<TContract, TImplementation>(TImplementation instance)
+        public void RegisterSingleton<TContract, TImplementation>(TImplementation instance)
         {
             Register<TContract, TImplementation>(null, instance, PropertiesTypeCondition.DisposeAll, InstanceTypeCondition.Share);
         }
 
 
-        public  T Resolve<T>()
+        public T Resolve<T>()
         {
             return (T)Resolve(typeof(T));
         }
-        public  object Resolve(Type contract)
+        public object Resolve(Type contract)
         {
             return Resolve(contract, null);
         }
 
-        private  object Resolve(Type contract, string name, PropertiesTypeCondition propertiesCondition = PropertiesTypeCondition.Search)
+        private object Resolve(Type contract, string name, PropertiesTypeCondition propertiesCondition = PropertiesTypeCondition.Search)
         {
-            object newInstance = null;
-            TypeRegister typeRegistered = null;
             var typesFound = from t in Types
                              where t.Key == contract
                              select t;
             var typeRegisters = typesFound as IList<TypeRegister> ?? typesFound.ToList();
-            int totalTypesFound = typeRegisters.Count();
-            if (!typeRegisters.Any() && propertiesCondition != PropertiesTypeCondition.AllowNull)
+
+            ValidateTypeRegistersAndPropertiesCondition(typeRegisters, propertiesCondition, contract);
+
+            var typeRegistered = ValidateTotalTypesFound(typeRegisters, name);
+
+            if (typeRegistered == null) return null;
+
+            var implementation = typeRegistered.Implementation;
+
+            var constructor = implementation.GetConstructors()[0];
+            var constructorParameters = constructor.GetParameters();
+            var propertiesParameters = implementation.GetProperties();
+
+            if (ValidateConstructorAndPropertiesParameters(constructorParameters, propertiesParameters))
             {
-                throw new ArgumentNullException(string.Format("Type {0} is not registered ", contract.Name));
+                if (ValidateInstance(typeRegistered, InstanceTypeCondition.Share))
+                    typeRegistered.Instance = Activator.CreateInstance(implementation);
+                return typeRegistered.Instance ?? Activator.CreateInstance(implementation);
             }
 
-            switch (totalTypesFound)
-            {
-                case 1:
-                    typeRegistered = typeRegisters.First();
-                    break;
-                default:
-                    var typeChosen = from t in typeRegisters
-                                     where t.Name == name
-                                     select t;
-                    var enumerable = typeChosen as IList<TypeRegister> ?? typeChosen.ToList();
-                    if (!enumerable.Any())
-                    {
-                        var typeNotNamed = from t in typeRegisters
-                                           where string.IsNullOrEmpty(t.Name)
-                                           select t;
-                        typeRegistered = typeNotNamed.First();
-                    }
-                    else
-                        typeRegistered = enumerable.First();
-                    break; 
-            }
-            
+            var parameters = new List<object>(constructorParameters.Length);
 
-            if (typeRegistered != null)
-            {
-                Type implementation = typeRegistered.Implementation;
+            PopulateInstanceParameters(parameters, typeRegistered, constructorParameters);
 
-                ConstructorInfo constructor = implementation.GetConstructors()[0];
-                ParameterInfo[] constructorParameters = constructor.GetParameters();
-                PropertyInfo[] propertiesParameters = implementation.GetProperties();
-                if (constructorParameters.Length == 0 && propertiesParameters.Length == 0)
+            if (ValidateInstance(typeRegistered, InstanceTypeCondition.Share))
+                typeRegistered.Instance = constructor.Invoke(parameters.ToArray());
+
+            var newInstance = typeRegistered.Instance ?? constructor.Invoke(parameters.ToArray());
+
+            if (typeRegistered.PropertiesCondition == PropertiesTypeCondition.DisposeAll) return newInstance;
+
+            foreach (var propertyInfo in propertiesParameters)
+                if (propertyInfo.PropertyType.IsInterface)
                 {
-                    if (typeRegistered.Instance == null && typeRegistered.InstanceCondition == InstanceTypeCondition.Share)
-                        typeRegistered.Instance = Activator.CreateInstance(implementation);
-                    return typeRegistered.Instance ?? Activator.CreateInstance(implementation);
+                    var value = Resolve(propertyInfo.PropertyType, propertyInfo.Name, propertiesCondition);
+                    if (value != null)
+                        propertyInfo.SetValue(newInstance, value, null);
                 }
-
-                var parameters = new List<object>(constructorParameters.Length);
-                if (typeRegistered.Instance == null || typeRegistered.InstanceCondition == InstanceTypeCondition.NonShare)
-                    parameters.AddRange(constructorParameters.Select(parameterInfo => Resolve(parameterInfo.ParameterType)));
-
-
-                if (typeRegistered.Instance == null && typeRegistered.InstanceCondition == InstanceTypeCondition.Share)
-                    typeRegistered.Instance = constructor.Invoke(parameters.ToArray());
-
-                newInstance = typeRegistered.Instance ?? constructor.Invoke(parameters.ToArray());
-
-                if (typeRegistered.PropertiesCondition != PropertiesTypeCondition.DisposeAll)
-                    foreach (PropertyInfo propertyInfo in propertiesParameters)
-                        if (propertyInfo.PropertyType.IsInterface)
-                        {
-                            object value = Resolve(propertyInfo.PropertyType, propertyInfo.Name, propertiesCondition);
-                            if (value != null)
-                                propertyInfo.SetValue(newInstance, value, null);
-                        }
-            }
             return newInstance;
         }
-    }    
+
+        private static void ValidateTypeRegistersAndPropertiesCondition(IList<TypeRegister> typeRegisters, PropertiesTypeCondition propertiesCondition, Type contract)
+        {
+            if (!typeRegisters.Any() && propertiesCondition != PropertiesTypeCondition.AllowNull)
+                throw new ArgumentNullException($"Type {contract.Name} is not registered ");
+        }
+
+        private static TypeRegister ValidateTotalTypesFound(IList<TypeRegister> typeRegisters, string name)
+        {
+            var types = typeRegisters.Count();
+
+            if (types.Equals(1))
+            {
+                return typeRegisters.First();
+            }
+
+            var typeChosen = from t in typeRegisters
+                             where t.Name == name
+                             select t;
+
+            var enumerable = typeChosen as IList<TypeRegister> ?? typeChosen.ToList();
+
+            if (enumerable.Any()) return enumerable.First();
+
+            var typeNotNamed = from t in typeRegisters
+                               where string.IsNullOrEmpty(t.Name)
+                               select t;
+
+            return typeNotNamed.First();
+        }
+
+        private static bool ValidateConstructorAndPropertiesParameters(ICollection<ParameterInfo> constructorParameters, ICollection<PropertyInfo> propertiesParameters)
+        {
+            return constructorParameters.Count == 0 && propertiesParameters.Count == 0;
+        }
+
+        private static bool ValidateInstance(TypeRegister typeRegistered, InstanceTypeCondition instanceTypeCondition)
+        {
+            return typeRegistered.Instance == null && typeRegistered.InstanceCondition == instanceTypeCondition;
+        }
+
+        private void PopulateInstanceParameters(List<object> parameters, TypeRegister typeRegistered, IEnumerable<ParameterInfo> constructorParameters)
+        {
+            if (ValidateInstance(typeRegistered, InstanceTypeCondition.NonShare))
+                parameters.AddRange(constructorParameters.Select(parameterInfo => Resolve(parameterInfo.ParameterType)));
+        }
+    }
 }

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace MobilityScm.Utilerias
 {
-    public class ListToDataTableClass
+    public static class ListToDataTableClass
     {
         public static DataTable ListToDataTable<T>(List<T> items)
         {
