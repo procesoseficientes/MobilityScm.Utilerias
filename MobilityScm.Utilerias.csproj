@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net40</TargetFramework>
+    <Description>Paquete de utilierias</Description>
+    <Copyright></Copyright>
+    <Authors>Procesos Eficientes</Authors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MobilityScm.Modelo.TipoYEstados" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+</Project>

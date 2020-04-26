@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "NOO5GdexSe2iLTPdTJpsZfceV1KfRtgNJ/8OPjX2eRlw9B1ccbO75Wxu/3UeyruH81SbxdUFStfjI8PvPJCaxQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\fabrv\\work\\MobilityScm.Utilerias\\MobilityScm.Utilerias.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\fabrv\\.nuget\\packages\\mobilityscm.modelo.tipoyestados\\1.0.1\\mobilityscm.modelo.tipoyestados.1.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
