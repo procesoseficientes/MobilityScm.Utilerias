@@ -1,10 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net40</TargetFramework>
+    <PackageId>MobilityScm.Utilerias</PackageId>
     <Description>Paquete de utilierias</Description>
     <Copyright></Copyright>
     <Authors>Procesos Eficientes</Authors>
+    <PackageProjectUrl>https://github.com/procesoseficientes/MobilityScm.Utilerias</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/procesoseficientes/MobilityScm.Utilerias</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

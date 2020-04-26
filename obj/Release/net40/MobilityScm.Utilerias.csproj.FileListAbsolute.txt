@@ -1,9 +1,0 @@
-C:\Users\fabrv\work\MobilityScm.Utilerias\bin\Release\net40\MobilityScm.Utilerias.dll
-C:\Users\fabrv\work\MobilityScm.Utilerias\bin\Release\net40\MobilityScm.Utilerias.pdb
-C:\Users\fabrv\work\MobilityScm.Utilerias\bin\Release\net40\MobilityScm.Modelo.TipoYEstados.dll
-C:\Users\fabrv\work\MobilityScm.Utilerias\obj\Release\net40\MobilityScm.Utilerias.csproj.CoreCompileInputs.cache
-C:\Users\fabrv\work\MobilityScm.Utilerias\obj\Release\net40\MobilityScm.Utilerias.AssemblyInfoInputs.cache
-C:\Users\fabrv\work\MobilityScm.Utilerias\obj\Release\net40\MobilityScm.Utilerias.AssemblyInfo.cs
-C:\Users\fabrv\work\MobilityScm.Utilerias\obj\Release\net40\MobilityScm.Utilerias.csproj.CopyComplete
-C:\Users\fabrv\work\MobilityScm.Utilerias\obj\Release\net40\MobilityScm.Utilerias.dll
-C:\Users\fabrv\work\MobilityScm.Utilerias\obj\Release\net40\MobilityScm.Utilerias.pdb

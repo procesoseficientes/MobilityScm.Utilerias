@@ -1,4 +1,0 @@
-C:\Users\fabrv\work\MobilityScm.Utilerias\obj\Debug\netcoreapp3.1\MobilityScm.Utilerias.csprojAssemblyReference.cache
-C:\Users\fabrv\work\MobilityScm.Utilerias\obj\Debug\netcoreapp3.1\MobilityScm.Utilerias.csproj.CoreCompileInputs.cache
-C:\Users\fabrv\work\MobilityScm.Utilerias\obj\Debug\netcoreapp3.1\MobilityScm.Utilerias.AssemblyInfoInputs.cache
-C:\Users\fabrv\work\MobilityScm.Utilerias\obj\Debug\netcoreapp3.1\MobilityScm.Utilerias.AssemblyInfo.cs
